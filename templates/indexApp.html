@@ -1,0 +1,129 @@
+<html>
+
+<head>
+
+    <link href="url_for('static/css',filename='styleform.css')" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body >
+
+
+<div class="row"
+     style="position:absolute; margin:auto; width:700px; height:200px; text-align:justify-all; top:20px; bottom: 20px; left: 0; right: 0;">
+    <h2>Identify Action </h2>
+    <p>Start cam recording first. Then click track motion</p>
+    <!--<div class="button-row" style="right: 50px"> -->
+    <a>
+        <button id="record" type=submit>Start cam recording</button>
+    </a>
+    <form action="{{ url_for('predict_activity')}}"method="post">
+        <button id="motion_prediction" type=submit >Track Motion</button>
+    </form>
+    <a>
+        <button id="stop" type=submit>Stop</button>
+    </a>
+    <a>
+        <button id="download" type=submit>Download</button>
+    </a>
+    <!--</div> -->
+
+    <img id="video" src="{{ url_for('video_viewer')}}">
+
+
+
+
+
+
+</div>
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script>
+
+    var buttonRecord = document.getElementById("record");
+    var buttonStop = document.getElementById("stop");
+    var buttonTracking = document.getElementById("motion_prediction");
+
+    //buttonStop.disabled = true;
+
+    buttonRecord.onclick = function () {
+        var url = window.location.href + "record_status";
+        buttonRecord.disabled = true;
+        buttonStop.disabled = false;
+
+        // disable download link
+        var downloadLink = document.getElementById("download");
+        downloadLink.text = "";
+        downloadLink.href = "";
+
+        // XMLHttpRequest
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                alert(xhr.responseText);
+            }
+        }
+        xhr.open("POST", "/record_status");
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.send(JSON.stringify({status: "true"}));
+    };
+
+     buttonStop.onclick = function () {
+        buttonRecord.disabled = false;
+        buttonStop.disabled = true;
+
+        // XMLHttpRequest
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // alert(xhr.responseText);
+
+                // enable download link
+                var downloadLink = document.getElementById("download");
+                downloadLink.text = "Download Video";
+                downloadLink.href = "/static/video.avi";
+            }
+        }
+        xhr.open("POST", "/record_status");
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.send(JSON.stringify({status: "false"}));
+    };
+
+     buttonTracking.onclick=function () {
+
+     };
+
+     //predict motion
+   //$("#motion_prediction").click(function(){
+        //let message = {
+            //video: base64Image
+        //}
+        //console.log(message);
+       // $.post("http://10.0.0.4:5000/predict", JSON.stringify(message), function(response){
+           // $("#sitting_pre").text(response.prediction.sitting.toFixed(6));
+           // $("#standing_pre").text(response.prediction.standing.toFixed(6));
+           // $("#walking_pre").text(response.prediction.walking.toFixed(6));
+            //$("#picking_pre").text(response.prediction.picking.toFixed(6));
+           // console.log(response);
+        //});
+    //});
+
+
+
+
+
+
+</script>
+
+
+</html>
+
+
+
+
+
+
